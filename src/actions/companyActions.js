@@ -1,3 +1,5 @@
+import databaseRef from "../firebaseConfig";
+
 export const FETCH_COMPANY_DATA = 'FETCH_COMPANY_DATA';
 export const FETCH_COMPANY_DATA_SUCCESS = 'FETCH_COMPANY_DATA_SUCCESS';
 export const FETCH_COMPANY_DATA_ERROR = 'FETCH_COMPANY_DATA_ERROR';
@@ -21,36 +23,13 @@ export let getCompanyData = () => {
     return async function (dispatch, getState, args) {
         try {
             dispatch(fetchCompanyData());
-            let company = [
-                {
-                    id: "1",
-                    name: "Samsung",
-                    address: "qweasdf sadas",
-                    revenue:  1000000,
-                    phone: "123-123-1232"
-                },
-                {
-                    id: "2",
-                    name: "Apple",
-                    address: "ksjasj al1234",
-                    revenue:  22222222,
-                    phone: "123-123-1232"
-                },
-                {
-                    id: "3",
-                    name: "Microsoft",
-                    address: "America",
-                    revenue:  33333333,
-                    phone: "123-123-1232"
-                },
-                {
-                    id: "4",
-                    name: "Twitter",
-                    address: "Near FB",
-                    revenue:  4444444,
-                    phone: "123-123-1232"
-                }
-            ]
+            let company = [];
+            let companyData = await databaseRef.collection("CompanyList").get();
+            companyData.forEach(e=>{
+                let newObj = e.data();
+                newObj["id"] = e.id;
+                company.push(newObj);
+            })
 
             dispatch(fetchCompanyDataSuccess(company))
         } catch (error) {
@@ -66,11 +45,15 @@ export let getCompanyData = () => {
 export let createNewCompany = (name,address,revenue,phone) => {
     return async function (dispatch, getState, args) {
         try {
-            let companyList = getState.companyState.company;
-            console.log(companyList)
+            let res = await databaseRef.collection("CompanyList").add({
+                name:name,
+                address:address,
+                phone:phone,
+                revenue:parseInt(revenue)
+            });
+            console.log("Success", res.id)
         } catch (error) {
             console.log(error);
-           
         }
     }
 }

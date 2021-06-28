@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components"
 import { createNewCompany, getCompanyData } from "../actions/companyActions";
+import { addEmployeeData } from "../actions/employeeActions";
 import CompanyCard from "./CompanyCard";
 
 
@@ -164,7 +165,7 @@ export default function Hompage() {
 
     let employeeNameRef = useRef();
     let employeeAddressRef = useRef();
-    let [companySelected, setCompanySelected] = useState("");
+    let [companySelected, setCompanySelected] = useState(companyData.company[0].id);
     let [employeeNameError,setEmployeeNameError] = useState("");
     let [employeeAddressError,setEmployeeAddressError] = useState("");
     let validateEmployee = ()=>{
@@ -180,9 +181,9 @@ export default function Hompage() {
             hasError = true;
             setEmployeeAddressError("Please Enter Company Address!");
         }
-
+        console.log("???",companySelected)
         if(!hasError){
-
+            dispatch(addEmployeeData(name,address,companySelected))
         }
     }
     return (
